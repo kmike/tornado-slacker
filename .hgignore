@@ -1,0 +1,31 @@
+syntax: glob
+
+#projects
+.settings/*
+.project
+.pydevproject
+.cache/*
+nbproject/*
+.buildpath
+build.properties
+MANIFEST.MF
+
+#temp files
+*.pyc
+*.pyo
+*.orig
+*~
+stuff/
+
+#os files
+.DS_Store
+Thumbs.db
+
+#setup files
+build/
+dist/
+MANIFEST
+django_async_orm.egg-info
+
+#my files
+db.sqlite
