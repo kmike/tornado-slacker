@@ -8,6 +8,7 @@ Installation
 ============
 
 ::
+
     pip install "tornado >= 1.2"
     pip install django-async-orm
 
@@ -50,7 +51,7 @@ or, with pep-342 syntax and adisp library (it is bundled)::
         print users
 
 You still can't rely on third-party code that uses django ORM
-in Tornado handlers but it is at least easy to reimplement it now
+in Tornado handlers but it is at least easy to reimplement this code
 if necessary.
 
 Currently the only implemented method for offloading query execution
@@ -86,6 +87,8 @@ at https://github.com/kmike/django-async-orm/issues
 
 Both hg and git pull requests are welcome!
 
+Source code:
+
 * https://bitbucket.org/kmike/django-async-orm/
 * https://github.com/kmike/django-async-orm/
 
@@ -99,7 +102,8 @@ Inspiration:
 * https://bitbucket.org/david/django-roa/
 
 Third-party software: `adisp <https://code.launchpad.net/adisp>`_ (tornado
-implementation is taken from `brukva <https://github.com/evilkost/brukva>`_).
+adisp implementation is taken from
+`brukva <https://github.com/evilkost/brukva>`_).
 
 License
 =======
