@@ -16,10 +16,10 @@ setup(
     url = 'https://github.com/kmike/tornado-slacker/',
     download_url = 'https://bitbucket.org/kmike/tornado-slacker/get/tip.zip',
 
-    description = 'This package provides an easy API for moving the work out of the tornado process or ioloop.',
+    description = 'This package provides an easy API for moving the work out of the tornado process / event loop.',
     long_description = open('README.rst').read(),
     license = 'MIT license',
-    requires = ['django (>=1.2)', 'tornado (>= 1.2)'],
+    requires = ['tornado (>= 1.2)'],
 
     packages=[
         'slacker',
@@ -30,13 +30,12 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
-        'Framework :: Tornado',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        'Topic :: Software Development :: Libraries :: Python Modules'
+        'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Database',
     ],
 )
