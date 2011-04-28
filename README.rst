@@ -41,11 +41,7 @@ Installation
 
 ::
 
-    pip install "tornado >= 1.2"
     pip install tornado-slacker
-
-FIXME: this is not uploaded to pypi now
-
 
 Slackers
 ========
@@ -129,13 +125,25 @@ Workers are classes that decides how and where the work should be done:
 
   .. note::
 
-      Django's QuerySet arguments like Q, F objects and aggregate functions
-      (e.g. Count) are picklable so tornado-slacker can handle them fine.
+      Django's QuerySet arguments like Q, F objects, aggregate and annotate
+      functions (e.g. Count) are picklable so tornado-slacker can handle
+      them fine::
+
+          AsyncAuthor = Slacker(Author, DjangoWorker())
+
+          # ...
+          qs = AsyncAuthor.objects.filter(
+                  Q(name='vasia') or Q(is_great=True)
+               ).values('name').annotate(average_rating=Avg('book__rating'))[:10]
+
+          authors = yield qs.fetch()
 
       Using slacker.Slacker is better than pickling queryset.query
       (as adviced at http://docs.djangoproject.com/en/dev/ref/models/querysets/#pickling-querysets)
       because this allows to pickle any ORM calls including ones that
-      don't return QuerySets (http://docs.djangoproject.com/en/dev/ref/models/querysets/#methods-that-do-not-return-querysets).
+      don't return QuerySets (http://docs.djangoproject.com/en/dev/ref/models/querysets/#methods-that-do-not-return-querysets)::
+
+          yield AsyncUser.objects.create_superuser('foo').fetch()
 
       Moreover, slacker.Slacker adds transparent support for remote invocation
       of custom managers and model methods, returning just the model instance
@@ -146,8 +154,9 @@ Contributing
 ============
 
 If you have any suggestions, bug reports or
-annoyances please report them to the issue tracker
-at https://github.com/kmike/tornado-slacker/issues
+annoyances please report them to the issue tracker:
+
+* https://github.com/kmike/tornado-slacker/issues
 
 Source code:
 

@@ -14,7 +14,7 @@ class ThreadWorker(object):
 
     .. warning::
 
-        postponed code shouldn't iteract with tornado because
+        postponed code shouldn't interact with tornado because
         tornado is not thread-safe.
 
     .. waring::
