@@ -16,7 +16,7 @@ setup(
     url = 'https://github.com/kmike/tornado-slacker/',
     download_url = 'https://bitbucket.org/kmike/tornado-slacker/get/tip.zip',
 
-    description = 'This package provides an easy API for moving the work out of the tornado process.',
+    description = 'This package provides an easy API for moving the work out of the tornado process or ioloop.',
     long_description = open('README.rst').read(),
     license = 'MIT license',
     requires = ['django (>=1.2)', 'tornado (>= 1.2)'],

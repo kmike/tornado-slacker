@@ -19,3 +19,6 @@ def slacker_execute(request):
         return HttpResponse(data)
     except SlackerException, e:
         return HttpResponseBadRequest(str(e))
+#    except Exception, e:
+#        print e
+#        raise

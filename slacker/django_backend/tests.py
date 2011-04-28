@@ -1,6 +1,7 @@
+import pickle
+
 from django.test import TestCase as DjangoTestCase
 from django.contrib.auth.models import User
-import pickle
 
 from slacker.postpone import Postponed
 

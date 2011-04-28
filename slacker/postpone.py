@@ -5,7 +5,7 @@ except ImportError:
     import pickle
 
 from slacker import adisp
-from slacker.workers.local import LocalWorker
+from slacker.workers.local import DummyWorker
 
 class SlackerException(Exception):
     pass
@@ -28,7 +28,7 @@ class Postponed(object):
     def __init__(self, obj, worker = None):
         self._obj = obj
         self._chain = []
-        self._worker = worker or LocalWorker()
+        self._worker = worker or DummyWorker()
 
     def __repr__(self):
         return "%s: %s" % (self._obj, pprint.pformat(self._chain))
@@ -39,7 +39,7 @@ class Postponed(object):
     def __setstate__(self, state):
         self._chain, self._obj = state
         # always use local worker after unpickling
-        self._worker = LocalWorker()
+        self._worker = DummyWorker()
 
     @property
     def _pickled(self):
@@ -99,7 +99,7 @@ class Postponed(object):
     fetch = adisp.async(proceed)
 
 
-class PostponeWrapper(object):
+class Slacker(object):
     """
     Starts a new Postponed instance for every attribute access.
     Useful for wrapping existing classes into postponing proxies.
