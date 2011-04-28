@@ -56,7 +56,7 @@ must be picklable. Slackers also provide a method to apply the collected
 operations to a base object.
 
 Any picklable object (including top-level functions and classes) can
-be wrapped into Slacker, e.g.:
+be wrapped into Slacker, e.g.::
 
     from slacker import adisp
     from slacker import Slacker
@@ -80,7 +80,7 @@ be wrapped into Slacker, e.g.:
 
     def on_result(results):
         print results
-        
+
 
 Workers
 =======
