@@ -1,8 +1,9 @@
-================
-django-async-orm
-================
+===============
+tornado-slacker
+===============
 
-This app makes non-blocking django ORM calls possible.
+This package provides an easy API for moving the work out of
+the tornado process.
 
 Installation
 ============
@@ -10,96 +11,61 @@ Installation
 ::
 
     pip install "tornado >= 1.2"
-    pip install django-async-orm
+    pip install tornado-slacker
 
 FIXME: this is not uploaded to pypi now
 
-Overview
-========
+Usage
+=====
 
-This app can be used for tornado + django integration: run tornado
-as django management command (on a separate port) => all django code will be
-available in tornado process; then use this library instead of
-plain django ORM calls in Tornado handlers to make these calls non-blocking.
+Please dig into source code for more info, this README is totally
+incomplete.
 
-::
+TODO: proper usage guide: how to configure backend (e.g django) for this?
+How to deploy?
 
-    from django.contrib.auth.models import User
-    from async_orm.incarnations.http import AsyncWrapper
-
-    AsyncUser = AsyncWrapper(User)
-
-    # ...
-
-    def process_data(self):
-        # all the django orm syntax is supported here
-        qs = AsyncUser.objects.filter(is_staff=True)[:5]
-        qs.execute(self.on_ready)
-
-    def on_ready(self, users):
-        # do something with query result
-        print users
-
-or, with pep-342 syntax and adisp library (it is bundled)::
-
-    from async_orm.vendor import adisp
-
-    @adisp.process
-    def process_data(self):
-        qs = AsyncUser.objects.filter(is_staff=True)[:5]
-        users = yield qs.fetch()
-        print users
-
-You still can't rely on third-party code that uses django ORM
-in Tornado handlers but it is at least easy to reimplement this code
-if necessary.
+Performance notes
+=================
 
 Currently the only implemented method for offloading query execution
 from the ioloop is to execute the blocking code in a django view and
 fetch results using tornado's AsyncHttpClient. This way it was possible
 to get a simple implementation, easy deployment and a thread pool
-(managed by webserver) for free. HTTP, however, can cause a
-significant overhead.
+(managed by webserver) for free.
 
-Please dig into source code for more info, this README is totally
-incomplete.
+IOLoop blocks on any CPU activity and making http requests plus
+pickling/unpickling can cause a significant overhead here. So if the query
+is fast (e.g. database primary key or index lookup, say 10ms) then it is
+better to call the query in 'blocking' way: the overall blocking
+time will be less than with 'async' approach because of reduced
+computations amount.
 
-TODO: proper usage guide: how to configure django for this? how to deploy?
-
-Configuration
-=============
-
-(async.incarnations.http.urls must be included in urls)
-
-TODO: write this
-
-Usage
-=====
-
-TODO
+tornado-slacker unpickles the received results and unpickling can be
+CPU-intensive so it is better to return as little as possible from
+postponed chains.
 
 Contributing
 ============
 
 If you have any suggestions, bug reports or
 annoyances please report them to the issue tracker
-at https://github.com/kmike/django-async-orm/issues
-
-Both hg and git pull requests are welcome!
+at https://github.com/kmike/tornado-slacker/issues
 
 Source code:
 
-* https://bitbucket.org/kmike/django-async-orm/
-* https://github.com/kmike/django-async-orm/
+* https://bitbucket.org/kmike/tornado-slacker/
+* https://github.com/kmike/tornado-slacker/
+
+Both hg and git pull requests are welcome!
 
 Credits
 =======
 
 Inspiration:
 
-* http://tornadogists.org/654157/
 * https://github.com/satels/django-async-dbslayer/
 * https://bitbucket.org/david/django-roa/
+* http://tornadogists.org/654157/
 
 Third-party software: `adisp <https://code.launchpad.net/adisp>`_ (tornado
 adisp implementation is taken from

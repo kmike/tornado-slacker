@@ -1,10 +1,6 @@
 from django.utils import unittest
-from django.test import TestCase as DjangoTestCase
-from django.contrib.auth.models import User
-from django.db import models
-import pickle
 
-from async_orm.chains import ChainProxy, ModelChainProxy
+from slacker.postpone import Postponed
 
 class Foo(object):
 
@@ -28,17 +24,17 @@ class Foo(object):
         return self._name
 
 
-class ChainTest(unittest.TestCase):
+class PostponeTest(unittest.TestCase):
 
     def assertRestored(self, chain, value):
-        self.assertEqual(chain.restore(), value)
+        self.assertEqual(chain._proceed(), value)
 
     def setUp(self):
         self.foo = Foo('foo')
 
     def _foo(self):
-        # ChainProxy objects shouldn't be reused
-        return ChainProxy(self.foo)
+        # PostponeProxy objects shouldn't be reused
+        return Postponed(self.foo)
 
     def test_method_basic(self):
         self.assertRestored(self._foo().get_name(), 'foo')
@@ -70,20 +66,8 @@ class ChainTest(unittest.TestCase):
         self.foo.name
         self.assertTrue(self.foo.name_accessed)
 
+    def test_top_level_callables(self):
+        chain = Postponed(Foo)('bar')
+        self.assertEqual(chain._proceed().name, 'bar')
 
-class ModelChainTest(DjangoTestCase):
 
-    def setUp(self):
-        self.user = User.objects.create_user('example', 'example@example.com')
-
-    @property
-    def AsyncUser(self):
-        return ModelChainProxy(User)
-
-    def test_restore(self):
-        user = self.AsyncUser.objects.get(username='example')
-        self.assertEqual(user.restore(), self.user)
-
-    def test_pickling_unpickling(self):
-        user = self.AsyncUser.objects.get(username='example')
-        self.assertEqual(pickle.loads(user._pickled).restore(), self.user)

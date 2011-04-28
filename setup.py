@@ -9,23 +9,22 @@ for cmd in ('egg_info', 'develop', 'upload_sphinx', 'build_sphinx'):
 version='0.0.1'
 
 setup(
-    name = 'django-async-orm',
+    name = 'tornado-slacker',
     version = version,
     author = 'Mikhail Korobov',
     author_email = 'kmike84@gmail.com',
-    url = 'https://github.com/kmike/django-async-orm/',
-    download_url = 'https://bitbucket.org/kmike/django-async-orm/get/tip.zip',
+    url = 'https://github.com/kmike/tornado-slacker/',
+    download_url = 'https://bitbucket.org/kmike/tornado-slacker/get/tip.zip',
 
-    description = 'This app makes non-blocking django ORM calls possible (currently using tornado.httpclient.AsyncHTTPClient)',
+    description = 'This package provides an easy API for moving the work out of the tornado process.',
     long_description = open('README.rst').read(),
     license = 'MIT license',
     requires = ['django (>=1.2)', 'tornado (>= 1.2)'],
 
     packages=[
-        'async_orm',
-        'async_orm.vendor',
-        'async_orm.incarnations',
-        'async_orm.incarnations.http'
+        'slacker',
+        'slacker.workers',
+        'slacker.django_backend',
     ],
 
     classifiers=[

@@ -25,7 +25,7 @@ Thumbs.db
 build/
 dist/
 MANIFEST
-django_async_orm.egg-info
+tornado_slacker.egg-info
 
 #my files
 db.sqlite
