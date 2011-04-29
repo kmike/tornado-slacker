@@ -1,12 +1,12 @@
 import pprint
 import sys
 import types
+
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 
-from slacker import adisp
 from slacker.workers.local import DummyWorker
 
 class SlackerException(Exception):
@@ -117,9 +117,6 @@ class Postponed(object):
         """
         worker = worker or self._worker
         worker.proceed(self, callback)
-
-    # pep-342 variant of proceed
-    fetch = adisp.async(proceed)
 
 
 class Slacker(object):

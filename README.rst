@@ -17,7 +17,7 @@ API example::
     from django.contrib.auth.models import User
     from slacker import adisp
     from slacker import Slacker
-    from slacker.workers.django import DjangoWorker
+    from slacker.workers import DjangoWorker
 
     AsyncUser = Slacker(User, DjangoWorker())
 
@@ -26,10 +26,7 @@ API example::
 
         # all the django ORM is supported; the query will be executed
         # on remote end, this will not block the IOLoop
-        qs = AsyncUser.objects.filter(is_staff=True)[:5]
-
-        # execute the query and get the results
-        users = yield qs.fetch()
+        users = yield AsyncUser.objects.filter(is_staff=True)[:5]
         print users
 
 (pep-342 syntax and adisp library are optional, callback-style code
@@ -67,7 +64,7 @@ be wrapped into Slacker, e.g.::
     # pep-342-style
     @adisp.process
     def process_data():
-        results = yield async_task('foo', 'bar').fetch()
+        results = yield async_task('foo', 'bar')
         print results
 
     # callback style
@@ -92,13 +89,13 @@ Workers
 
 Workers are classes that decides how and where the work should be done:
 
-* ``slacker.workers.local.DummyWorker`` executes code in-place (this
+* ``slacker.workers.DummyWorker`` executes code in-place (this
   is blocking);
 
-* ``slacker.workers.local.ThreadWorker`` executes code in a thread from
+* ``slacker.workers.ThreadWorker`` executes code in a thread from
   a thread pool;
 
-* ``slacker.workers.http.HttpWorker`` pickles the slacker, makes an async
+* ``slacker.workers.HttpWorker`` pickles the slacker, makes an async
   http request with this data to a given server hook and expects it
   to execute the code and return pickled results;
 
@@ -115,8 +112,8 @@ Workers are classes that decides how and where the work should be done:
       It is also wise to return as little as possible if HttpWorker is used.
 
 
-* ``slacker.workers.django.DjangoHttpWorker`` is just a HttpWorker with
-  default values for use with bundled django remote server hook implementation
+* ``slacker.workers.DjangoHttpWorker`` is just a HttpWorker with default
+  values for use with bundled django remote server hook implementation
   (``slacker.django_backend``).
 
   In order to enable django hook, include 'slacker.django_backend.urls'
@@ -145,14 +142,14 @@ Workers are classes that decides how and where the work should be done:
                   Q(name='vasia') or Q(is_great=True)
                ).values('name').annotate(average_rating=Avg('book__rating'))[:10]
 
-          authors = yield qs.fetch()
+          authors = yield qs
 
       Using slacker.Slacker is better than pickling queryset.query
       (as adviced at http://docs.djangoproject.com/en/dev/ref/models/querysets/#pickling-querysets)
       because this allows to pickle any ORM calls including ones that
       don't return QuerySets (http://docs.djangoproject.com/en/dev/ref/models/querysets/#methods-that-do-not-return-querysets)::
 
-          yield AsyncUser.objects.create_superuser('foo').fetch()
+          yield AsyncUser.objects.create_superuser('foo')
 
       Moreover, slacker.Slacker adds transparent support for remote invocation
       of custom managers and model methods, returning just the model instance
