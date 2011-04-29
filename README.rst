@@ -40,6 +40,43 @@ Installation
 
     pip install tornado-slacker
 
+
+Slackers and workers
+====================
+
+In order to execute some code in non-blocking manner:
+
+1. Create a Slacker (configured with desired worker) for some python object::
+
+       from slacker import Slacker
+       from slacker.workers import ThreadWorker
+
+       class Foo(object):
+           # ...
+
+       worker = ThreadWorker()
+       AsyncFoo = Slacker(Foo, worker)
+
+2. build a query (you can access attributes, do calls and slicing)::
+
+       query = AsyncFoo('foo').do_blocking_operation(param1, param2)[0]
+
+3. execute the query::
+
+       def callback(result):
+           # ...
+
+       query.proceed(callback)
+
+   or, using pep-342 style::
+
+       from slacker import adisp
+
+       @adisp.process
+       def handler():
+           result = yield query
+           # ...
+
 Slackers
 ========
 
@@ -99,34 +136,6 @@ Python modules also can be Slackers::
     shutil_async = Slacker(shutil, ThreadWorker())
     op = shutil_async.copy('file1.txt', 'file2.txt')
     op.proceed()
-
-
-Parallel task execution is supported by adisp library::
-
-    def _task1(param1, param2):
-        # do something blocking
-        return results
-
-    def _task2():
-        # do something blocking
-        return results
-
-    # worker can be reused
-    worker = ThreadWorker()
-    task1 = Slacker(_task1, worker)
-    task2 = Slacker(_task2, worker)
-
-    @adisp.process
-    def process_data():
-        # this will execute task1 and task2 in parallel
-        # and return the result after all data is ready
-        res1, res2 = yield task1('foo', 'bar'), task2()
-        print res1, res2
-
-.. note::
-
-    this will fail with ``DjangoWorker`` and django development server
-    because django development server is single-threaded
 
 Workers
 =======
@@ -198,6 +207,37 @@ Workers are classes that decides how and where the work should be done:
       Moreover, slacker.Slacker adds transparent support for remote invocation
       of custom managers and model methods, returning just the model instance
       attributes, etc.
+
+
+Parallel execution
+==================
+
+Parallel task execution is supported by adisp library::
+
+    def _task1(param1, param2):
+        # do something blocking
+        return results
+
+    def _task2():
+        # do something blocking
+        return results
+
+    # worker can be reused
+    worker = ThreadWorker()
+    task1 = Slacker(_task1, worker)
+    task2 = Slacker(_task2, worker)
+
+    @adisp.process
+    def process_data():
+        # this will execute task1 and task2 in parallel
+        # and return the result after all data is ready
+        res1, res2 = yield task1('foo', 'bar'), task2()
+        print res1, res2
+
+.. note::
+
+    this will fail with ``DjangoWorker`` and django development server
+    because django development server is single-threaded
 
 
 Contributing
