@@ -74,6 +74,34 @@ be wrapped into Slacker, e.g.::
     def on_result(results):
         print results
 
+
+Parallel task execution is supported by adisp library::
+
+    def _task1(param1, param2):
+        # do something blocking
+        return results
+
+    def _task2():
+        # do something blocking
+        return results
+
+    # worker can be reused
+    worker = ThreadWorker()
+    task1 = Slacker(_task1, worker)
+    task2 = Slacker(_task2, worker)
+
+    @adisp.process
+    def process_data():
+        # this will execute task1 and task2 in parallel
+        # and return the result after all data is ready
+        res1, res2 = yield task1('foo', 'bar'), task2()
+        print res1, res2
+
+.. note::
+
+    this will fail with ``DjangoWorker`` and django development server
+    because django development server is single-threaded
+
 Python modules also can be Slackers::
 
     import shutil
@@ -112,7 +140,7 @@ Workers are classes that decides how and where the work should be done:
       It is also wise to return as little as possible if HttpWorker is used.
 
 
-* ``slacker.workers.DjangoHttpWorker`` is just a HttpWorker with default
+* ``slacker.workers.DjangoWorker`` is just a HttpWorker with default
   values for use with bundled django remote server hook implementation
   (``slacker.django_backend``).
 

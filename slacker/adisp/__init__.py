@@ -10,10 +10,18 @@ from slacker.postpone import Postponed, Slacker
 
 
 class _SlackerCallbackDispatcher(CallbackDispatcher):
+
     def call(self, callers):
-        if isinstance(callers, (Postponed, Slacker)):
-            callers = async(callers.proceed)()
+        if hasattr(callers, '__iter__'):
+            callers = map(self._prepare, callers)
+        else:
+            callers = self._prepare(callers)
         return super(_SlackerCallbackDispatcher, self).call(callers)
+
+    def _prepare(self, func):
+        if isinstance(func, (Postponed, Slacker)):
+            return async(func.proceed)()
+        return func
 
 
 def process(func):
