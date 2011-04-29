@@ -83,7 +83,7 @@ Python modules also can be Slackers::
     from slacker import Slacker
     from slacker.workers import ThreadWorker
 
-    shutil_async = Slacker(shutil, ThreadWorker)
+    shutil_async = Slacker(shutil, ThreadWorker())
     op = shutil_async.copy('file1.txt', 'file2.txt')
     op.proceed()
 
