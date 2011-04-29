@@ -111,6 +111,9 @@ class Slacker(object):
     def __getattr__(self, item):
         return getattr(Postponed(self._obj, self._worker), item)
 
+    def __call__(self, *args, **kwargs):
+        return Postponed(self._obj, self._worker).__call__(*args, **kwargs)
+
 
 def proceed_pickled(pickled_postponed_obj):
     """
