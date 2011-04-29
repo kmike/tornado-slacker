@@ -9,7 +9,7 @@ Currently implemented methods are:
 
 * execute the code in another server's http hook
   (django implementation is included);
-* execute the code in a separate thread;
+* execute the code in a separate thread (thread pool is used);
 * dummy immediate execution.
 
 API example::
@@ -23,9 +23,9 @@ API example::
 
     @adisp.process
     def process_data():
-
         # all the django ORM is supported; the query will be executed
         # on remote end, this will not block the IOLoop
+
         users = yield AsyncUser.objects.filter(is_staff=True)[:5]
         print users
 
