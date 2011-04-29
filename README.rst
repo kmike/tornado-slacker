@@ -44,9 +44,23 @@ Slackers
 ========
 
 Slackers are special objects that are collecting operations (attribute
-access, calls, slicing) without actually executing them. Callables arguments
-must be picklable. Slackers also provide a method to apply the collected
-operations to a base object.
+access, calls, slicing) without actually executing them::
+
+    >>> from slacker import Slacker
+    >>> class Foo():
+    ...     pass
+    ...
+    >>> FooSlacker = Slacker(Foo)
+    >>> FooSlacker.hello.world()
+    __main__.Foo: [('hello',), ('world', (), {})]
+    >>> FooSlacker(name='me').hello.world(1, y=3)[:3]
+    __main__.Foo: [(None, (), {'name': 'me'}),
+     ('hello',),
+     ('world', (1,), {'y': 3}),
+     (slice(None, 3, None), None)]
+
+Callables arguments must be picklable. Slackers also provide a
+method to apply the collected operations to a base object.
 
 Any picklable object (including top-level functions and classes) can
 be wrapped into Slacker, e.g.::
