@@ -72,3 +72,34 @@ class PostponeTest(unittest.TestCase):
         self.assertEqual(chain._proceed().name, 'bar')
 
 
+class ModulesTest(unittest.TestCase):
+
+    def assertRepickled(self, chain, value):
+        repickled = pickle.loads(chain._pickled)
+        self.assertEqual(repickled._proceed(), value)
+
+    def test_modules(self):
+        import string
+        chain = Postponed(string).ascii_letters
+        self.assertEqual(chain._proceed(), string.ascii_letters)
+
+    def test_module_pickling_simple(self):
+        import string
+        chain = Postponed(string).ascii_letters
+        self.assertRepickled(chain, string.ascii_letters)
+
+    def test_module_pickling_dotted(self):
+        import logging.handlers
+        chain = Postponed(logging.handlers).SocketHandler
+        self.assertRepickled(chain, logging.handlers.SocketHandler)
+
+    def test_module_pickling_renamed(self):
+        from logging import handlers as hh
+        chain = Postponed(hh).SocketHandler
+        self.assertRepickled(chain, hh.SocketHandler)
+
+    def test_slacker(self):
+        from logging import handlers as hh
+        handlers = Slacker(hh)
+        self.assertRepickled(handlers.SocketHandler, hh.SocketHandler)
+        self.assertRepickled(handlers.DatagramHandler, hh.DatagramHandler)

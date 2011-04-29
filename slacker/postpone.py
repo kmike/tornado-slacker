@@ -1,4 +1,6 @@
 import pprint
+import sys
+import types
 try:
     import cPickle as pickle
 except ImportError:
@@ -9,6 +11,19 @@ from slacker.workers.local import DummyWorker
 
 class SlackerException(Exception):
     pass
+
+class _Module(object):
+    """ Helper class for pickling python modules """
+
+    def __init__(self, module):
+        self.module = module
+
+    def __getstate__(self):
+        return self.module.__name__
+
+    def __setstate__(self, name):
+        __import__(name)
+        self.module = sys.modules[name]
 
 
 class Postponed(object):
@@ -34,10 +49,18 @@ class Postponed(object):
         return "%s: %s" % (self._obj, pprint.pformat(self._chain))
 
     def __getstate__(self):
+
+        if isinstance(self._obj, types.ModuleType):
+            return self._chain, _Module(self._obj)
+
         return self._chain, self._obj
 
     def __setstate__(self, state):
         self._chain, self._obj = state
+
+        if isinstance(self._obj, _Module):
+            self._obj = self._obj.module
+
         # always use local worker after unpickling
         self._worker = DummyWorker()
 

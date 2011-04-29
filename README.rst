@@ -47,7 +47,7 @@ Slackers
 ========
 
 Slackers are special objects that are collecting operations (attribute
-access, calls, slicing) without actually executing them. Callable arguments
+access, calls, slicing) without actually executing them. Callables arguments
 must be picklable. Slackers also provide a method to apply the collected
 operations to a base object.
 
@@ -77,6 +77,15 @@ be wrapped into Slacker, e.g.::
     def on_result(results):
         print results
 
+Python modules also can be Slackers::
+
+    import shutil
+    from slacker import Slacker
+    from slacker.workers import ThreadWorker
+
+    shutil_async = Slacker(shutil, ThreadWorker)
+    op = shutil_async.copy('file1.txt', 'file2.txt')
+    op.proceed()
 
 Workers
 =======
