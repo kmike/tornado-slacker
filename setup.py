@@ -6,7 +6,7 @@ for cmd in ('egg_info', 'develop', 'upload_sphinx', 'build_sphinx'):
     if cmd in sys.argv:
         from setuptools import setup
 
-version='0.0.1'
+version='0.0.2'
 
 setup(
     name = 'tornado-slacker',
