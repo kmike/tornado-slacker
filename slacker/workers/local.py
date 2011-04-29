@@ -4,8 +4,10 @@ from tornado.ioloop import IOLoop
 
 class DummyWorker(object):
     """ Dummy worker for local immediate execution """
-    def proceed(self, postponed, callback):
-        callback(postponed._proceed())
+    def proceed(self, postponed, callback = None):
+        res = postponed._proceed()
+        if callback:
+            callback(res)
 
 
 class ThreadWorker(object):
@@ -40,7 +42,10 @@ class ThreadWorker(object):
         self.pool = pool or self.__class__._default_pool
 
 
-    def proceed(self, postponed, callback):
+    def proceed(self, postponed, callback=None):
+        if callback is None:
+            self.pool.apply_async(postponed._proceed)
+            return
 
         def on_response(result):
             self.ioloop.add_callback(partial(callback, result))

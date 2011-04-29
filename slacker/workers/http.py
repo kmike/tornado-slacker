@@ -26,11 +26,12 @@ class HttpWorker(object):
     def __init__(self, server='127.0.0.1:8000', path='/'):
         self.url = server + path
 
-    def proceed(self, postponed, callback):
+    def proceed(self, postponed, callback=None):
 
         def on_response(response):
-            result = pickle.loads(response.body)
-            callback(result)
+            if callback:
+                result = pickle.loads(response.body)
+                callback(result)
 
         http = self.HTTPClient()
         http.fetch(self.url, on_response, method='POST', body=postponed._pickled)

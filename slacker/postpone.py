@@ -87,7 +87,7 @@ class Postponed(object):
                 result = func(*op[1], **op[2])
         return result
 
-    def proceed(self, callback, worker=None):
+    def proceed(self, callback=None, worker=None):
         """
         Executes the collected chain using given worker and calls the
         callback with results.
