@@ -53,6 +53,7 @@ access, calls, slicing) without actually executing them::
     >>> FooSlacker = Slacker(Foo)
     >>> FooSlacker.hello.world()
     __main__.Foo: [('hello',), ('world', (), {})]
+
     >>> FooSlacker(name='me').hello.world(1, y=3)[:3]
     __main__.Foo: [(None, (), {'name': 'me'}),
      ('hello',),
@@ -89,6 +90,17 @@ be wrapped into Slacker, e.g.::
         print results
 
 
+Python modules also can be Slackers::
+
+    import shutil
+    from slacker import Slacker
+    from slacker.workers import ThreadWorker
+
+    shutil_async = Slacker(shutil, ThreadWorker())
+    op = shutil_async.copy('file1.txt', 'file2.txt')
+    op.proceed()
+
+
 Parallel task execution is supported by adisp library::
 
     def _task1(param1, param2):
@@ -115,16 +127,6 @@ Parallel task execution is supported by adisp library::
 
     this will fail with ``DjangoWorker`` and django development server
     because django development server is single-threaded
-
-Python modules also can be Slackers::
-
-    import shutil
-    from slacker import Slacker
-    from slacker.workers import ThreadWorker
-
-    shutil_async = Slacker(shutil, ThreadWorker())
-    op = shutil_async.copy('file1.txt', 'file2.txt')
-    op.proceed()
 
 Workers
 =======
