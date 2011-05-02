@@ -44,7 +44,5 @@ ROOT_URLCONF = 'urls'
 INSTALLED_APPS=(
     'django.contrib.auth',
     'django.contrib.contenttypes',
-
-    'slacker',
-    'slacker.django_backend',
+    'testapp',
 )

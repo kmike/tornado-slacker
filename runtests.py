@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'test_project'))
 
 sys.argv.insert(1, 'test')
 if len(sys.argv) == 2:
-    sys.argv.extend(['slacker', 'django_backend'])
+    sys.argv.extend(['testapp'])
 
 from test_project import settings
 execute_manager(settings)
