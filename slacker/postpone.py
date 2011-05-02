@@ -1,13 +1,13 @@
+from __future__ import absolute_import
 import pprint
 import sys
 import types
-
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 
-from slacker.workers.local import DummyWorker
+from .workers.local import DummyWorker
 
 class SlackerException(Exception):
     pass

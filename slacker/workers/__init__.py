@@ -1,7 +1,9 @@
-from slacker.workers.local import DummyWorker, ThreadWorker
-from slacker.workers.http import HttpWorker, CurlHttpWorker
+from __future__ import absolute_import
+from .local import DummyWorker, ThreadWorker
+from .http import HttpWorker, CurlHttpWorker
 
 try:
-    from slacker.workers.django import DjangoWorker
-except ImportError: # django is not installed
-    pass
+    from .django import DjangoWorker
+except ImportError, e: # django is not installed
+    import warnings
+    warnings.warn("DjangoWorker is not available: %s" % e)

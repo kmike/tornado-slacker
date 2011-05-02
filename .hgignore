@@ -29,3 +29,4 @@ tornado_slacker.egg-info
 
 #my files
 db.sqlite
+.coverage

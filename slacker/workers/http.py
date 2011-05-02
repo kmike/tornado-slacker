@@ -23,7 +23,7 @@ class HttpWorker(object):
 
     HTTPClient = AsyncHTTPClient
 
-    def __init__(self, server='127.0.0.1:8000', path='/'):
+    def __init__(self, server='http://127.0.0.1:8000', path='/'):
         self.url = server + path
 
     def proceed(self, postponed, callback=None):

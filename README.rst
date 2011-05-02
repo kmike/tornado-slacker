@@ -46,7 +46,7 @@ Slackers and workers
 
 In order to execute some code in non-blocking manner:
 
-1. Create a Slacker (configured with desired worker) for some python object::
+1. Create a Slacker (configured with the desired worker) for some python object::
 
        from slacker import Slacker
        from slacker.workers import ThreadWorker

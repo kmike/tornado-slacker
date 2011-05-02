@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from django.core.urlresolvers import reverse
 from slacker.django_backend.conf import SLACKER_SERVER
-from slacker.workers.http import HttpWorker
+from .http import HttpWorker
 
 class DjangoWorker(HttpWorker):
 
