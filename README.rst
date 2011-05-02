@@ -269,7 +269,7 @@ Third-party software:
 * `adisp <https://code.launchpad.net/adisp>`_ (tornado adisp implementation
   is taken from `brukva <https://github.com/evilkost/brukva>`_);
 * exception serialization utils are from
-  `billiard <https://github.com/ask/billiard>` by Ask Solem.
+  `billiard <https://github.com/ask/billiard>`_ by Ask Solem.
 
 License
 =======
