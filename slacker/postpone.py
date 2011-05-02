@@ -7,7 +7,7 @@ try:
 except ImportError:
     import pickle
 
-from billiard.serialization import get_pickleable_exception
+from slacker.serialization import get_pickleable_exception
 
 
 class SlackerException(Exception):

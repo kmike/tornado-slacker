@@ -264,9 +264,12 @@ Inspiration:
 * https://bitbucket.org/david/django-roa/
 * http://tornadogists.org/654157/
 
-Third-party software: `adisp <https://code.launchpad.net/adisp>`_ (tornado
-adisp implementation is taken from
-`brukva <https://github.com/evilkost/brukva>`_).
+Third-party software:
+
+* `adisp <https://code.launchpad.net/adisp>`_ (tornado adisp implementation
+  is taken from `brukva <https://github.com/evilkost/brukva>`_);
+* exception serialization utils are from
+  `billiard <https://github.com/ask/billiard>` by Ask Solem.
 
 License
 =======
@@ -274,3 +277,5 @@ License
 The license is MIT.
 
 Bundled adisp library uses Simplified BSD License.
+
+slacker.serialization is under BSD License.
