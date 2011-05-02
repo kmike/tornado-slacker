@@ -7,10 +7,12 @@ try:
 except ImportError:
     import pickle
 
-from .workers.local import DummyWorker
+from billiard.serialization import get_pickleable_exception
+
 
 class SlackerException(Exception):
     pass
+
 
 class _Module(object):
     """ Helper class for pickling python modules """
@@ -43,7 +45,11 @@ class Postponed(object):
     def __init__(self, obj, worker = None):
         self._obj = obj
         self._chain = []
-        self._worker = worker or DummyWorker()
+        if not worker:
+            from .workers.local import DummyWorker
+            worker = DummyWorker()
+        self._worker = worker
+
 
     def __repr__(self):
         return "%s: %s" % (self._obj, pprint.pformat(self._chain))
@@ -62,6 +68,7 @@ class Postponed(object):
             self._obj = self._obj.module
 
         # always use local worker after unpickling
+        from .workers.local import DummyWorker
         self._worker = DummyWorker()
 
     @property
@@ -135,21 +142,37 @@ class Slacker(object):
         return Postponed(self._obj, self._worker).__call__(*args, **kwargs)
 
 
+def safe_proceed(postponed):
+    """
+    Proceeds postponed object locally and returns the result.
+    If and exception is thrown during execution, this exception
+    is catched and returned as a result. It is also ensured that
+    returned exception can be pickled.
+    """
+    try:
+        return postponed._proceed()
+    except Exception, e:
+        return get_pickleable_exception(e)
+
+
 def proceed_pickled(pickled_postponed_obj):
     """
     Unpickles postponed object, proceeds it locally, then pickles the result
-    and returns it. Raises SlackerException on errors.
+    and returns it (or the pickled exception if the processing fails).
+    On unpickling errors SlackerException is returned.
 
     Useful for worker implementation.
     """
-    try:
-        postponed = pickle.loads(pickled_postponed_obj)
-    except pickle.PicklingError, e:
-        raise SlackerException(str(e))
 
-    if not isinstance(postponed, Postponed):
-        raise SlackerException('Pickled object is not an instance of Postponed')
+    def get_result():
+        try:
+            postponed = pickle.loads(pickled_postponed_obj)
+        except pickle.PicklingError, e:
+            return SlackerException(str(e))
 
-    # TODO: better error handling
-    result = postponed._proceed()
-    return pickle.dumps(result, pickle.HIGHEST_PROTOCOL)
+        if not isinstance(postponed, Postponed):
+            return SlackerException('Pickled object is not an instance of Postponed')
+
+        return safe_proceed(postponed)
+
+    return pickle.dumps(get_result(), pickle.HIGHEST_PROTOCOL)

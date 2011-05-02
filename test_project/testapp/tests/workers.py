@@ -1,5 +1,3 @@
-
-
 from tornado.testing import AsyncHTTPTestCase
 from tornado.wsgi import WSGIContainer
 from tornado.ioloop import IOLoop
@@ -7,6 +5,7 @@ from tornado.ioloop import IOLoop
 from django.core.handlers.wsgi import WSGIHandler
 from django.test import TransactionTestCase as DjangoTestCase
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from slacker import Slacker, adisp
 from slacker.workers import ThreadWorker, DjangoWorker
@@ -27,14 +26,24 @@ class BaseWorkerTest(AsyncHTTPTestCase, DjangoTestCase):
         return WSGIContainer(WSGIHandler())
 
     @adisp.process
-    def get_user(self):
-        self.res = yield self.SlackerClass.objects.get(username=self.user.username)
+    def get_user(self, username=None):
+        username = username or self.user.username
+        self.res = yield self.SlackerClass.objects.get(username=username)
         self.stop()
 
     def test_get_user(self):
         self.get_user()
         self.wait()
         self.assertEqual(self.res, self.user)
+
+    def test_error_handling(self):
+
+        def run():
+            self.get_user('vasia')
+            self.wait()
+
+        self.assertRaises(ObjectDoesNotExist, run)
+
 
 
 class DjangoWorkerTest(BaseWorkerTest):

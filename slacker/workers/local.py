@@ -1,11 +1,14 @@
 from functools import partial
+from tornado import stack_context
 from tornado.ioloop import IOLoop
-
+from slacker.postpone import safe_proceed
 
 class DummyWorker(object):
     """ Dummy worker for local immediate execution """
     def proceed(self, postponed, callback = None):
-        res = postponed._proceed()
+        # safe_proceed is called instead of _proceed
+        # for consistent error handling
+        res = safe_proceed(postponed)
         if callback:
             callback(res)
 
@@ -43,11 +46,16 @@ class ThreadWorker(object):
 
 
     def proceed(self, postponed, callback=None):
+        _proceed = partial(safe_proceed, postponed)
+
         if callback is None:
-            self.pool.apply_async(postponed._proceed)
+            self.pool.apply_async(_proceed)
             return
 
+        # Without stack_context.wrap exceptions will not be propagated,
+        # they'll be catched by tornado. Hours of debugging ;)
+        @stack_context.wrap
         def on_response(result):
             self.ioloop.add_callback(partial(callback, result))
 
-        self.pool.apply_async(postponed._proceed, callback = on_response)
+        self.pool.apply_async(_proceed, callback = on_response)
