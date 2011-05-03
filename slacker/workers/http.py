@@ -14,7 +14,7 @@ class HttpWorker(object):
     and passed to the callback.
 
     Combined with traditional threaded web server like apache2 + mod_wsgi
-    or cherrypy this enables easy deployment, code islation and a thread
+    or cherrypy this enables easy deployment, code isolation and a thread
     pool for free (managed by webserver). HTTP and pickling/unpickling
     the result, however, may cause a significant overhead.
 
